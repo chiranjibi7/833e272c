@@ -51,7 +51,7 @@ function AppLayout() {
           ]}
         />
       </Sider>
-      <Layout style={{width:"95%"}}>
+      <Layout>
         <Header
          className="block md:hidden"
           theme="dark"
@@ -60,7 +60,6 @@ function AppLayout() {
             color: "white",
           }}
         >
-         
         </Header>
         <div
           className={
