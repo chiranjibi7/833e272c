@@ -1,23 +1,23 @@
 import React ,{useEffect} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getAllCalls,resetAllCalls } from '../slices/callSlice';
+import { getAllCalls} from '../slices/callSlice';
 import { Activity } from '../components/ActivityFeed';
+import { Spin} from 'antd';
 
 function ActivityFeed() {
   const dispatch=useDispatch();
-  const {isLoading,allCalls,archivedCallResponse, unarchivedCallResponse,unarchivedCallsResponse} = useSelector(state=>state.call);
+  const {isLoading,unarchivedCalls} = useSelector(state=>state.call);
 
   useEffect(()=>{
-    dispatch(resetAllCalls());
     dispatch(getAllCalls());
-  },[dispatch, archivedCallResponse, unarchivedCallsResponse,unarchivedCallResponse])
+  },[dispatch])
 
-  console.log(allCalls)
+
   return (
-    <div className='w-[90%] ml-[6rem] my-[2rem] flex flex-col' >
-      {isLoading && <p>Loading...</p>}
-      {allCalls && allCalls.map(call=>{
-        if(!call.is_archived) return <Activity key={call.id} {...call} flag="unarchived"/>        
+    <div className='w-[90%] h-screen ml-[6rem] my-[2rem] flex flex-col' >
+      {isLoading && <Spin tip="Loading" size='large'/>}
+      {unarchivedCalls && unarchivedCalls.map(call=>{
+        return <Activity key={call?.id} {...call}/>        
       })}
     </div>
   )

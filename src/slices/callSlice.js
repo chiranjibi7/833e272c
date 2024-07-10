@@ -1,13 +1,12 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { getAllCallsService, archiveSingleCallService, unarchiveSingleCallService, unarchiveAllCallService } from "../services";
+import { act } from "react";
 
 const initialState={
     isLoading:false,
-    allCalls:null,
-    singleCall:null,
-    archivedCallResponse:"",
-    unarchivedCallResponse:"",
-    unarchivedCallsResponse:"",
+    unarchivedCalls:[],
+    archivedCalls:[],
+    error:null
 };
 
 export const getAllCalls=createAsyncThunk('call/getAllCallsService',getAllCallsService);
@@ -20,9 +19,7 @@ const callSlice=createSlice({
     name:"call",
     initialState,
     reducers:{
-        resetAllCalls:(state)=>{
-            state.allCalls=null;
-        }
+        
     },
     extraReducers:(builder)=>{
 
@@ -30,27 +27,33 @@ const callSlice=createSlice({
             state.isLoading=true;
         }).addCase(getAllCalls.fulfilled,(state,action)=>{
             state.isLoading=false;
-            state.allCalls=action.payload;
-        }).addCase(getAllCalls.rejected,(state)=>{
+            state.unarchivedCalls = action.payload.filter(call=>!call.is_archived);
+            state.archivedCalls=action.payload.filter(call=>call.is_archived);
+        }).addCase(getAllCalls.rejected,(state,action)=>{
             state.isLoading=false;
+            state.error=action.payload
         }); 
         
         builder.addCase(unarchiveSingleCall.pending, (state,action)=> {
             state.isLoading=true;
         }).addCase(unarchiveSingleCall.fulfilled,(state,action)=>{
             state.isLoading=false;
-            state.unarchivedCallResponse=action.payload;
-        }).addCase(unarchiveSingleCall.rejected,(state)=>{
+            state.archivedCalls=state.archivedCalls.filter(call=>call.id!==action.payload.callId);
+            state.unarchivedCalls=[...state.unarchivedCalls,state.archivedCalls.find(call=>call.id===action.payload.callId)];
+        }).addCase(unarchiveSingleCall.rejected,(state,action)=>{
             state.isLoading=false;
+            state.error=action.error.message;
         }); 
 
         builder.addCase(archiveSingleCall.pending, (state,action)=> {
             state.isLoading=true;
         }).addCase(archiveSingleCall.fulfilled,(state,action)=>{
             state.isLoading=false;
-            state.archivedCallResponse=action.payload;
-        }).addCase(archiveSingleCall.rejected,(state)=>{
+            state.unarchivedCalls=state.unarchivedCalls.filter(call=>call.id!==action.payload.callId);
+            state.archivedCalls=[...state.archivedCalls,state.unarchivedCalls.find(call=>call.id===action.payload.callId)];
+        }).addCase(archiveSingleCall.rejected,(state,action)=>{
             state.isLoading=false;
+            state.error=action.error.message;
         }); 
 
         builder.addCase(unarchiveAllCallS.pending, (state,action)=> {
@@ -63,5 +66,5 @@ const callSlice=createSlice({
         }); 
     }
 });
-export const {resetAllCalls}= callSlice.actions;
+
 export default callSlice.reducer;

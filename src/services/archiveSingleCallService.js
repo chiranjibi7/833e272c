@@ -5,7 +5,7 @@ export const archiveSingleCallService=async(callId)=>{
         const response= await axios.patch(`https://aircall-backend.onrender.com/activities/${callId}`,{
             is_archived:true
         });
-        return response.data;
+        return {data:response.data,callId};
     } catch (error) {
         console.log(error)
     }
