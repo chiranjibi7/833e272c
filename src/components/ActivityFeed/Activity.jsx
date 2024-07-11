@@ -4,6 +4,7 @@ import { PiDotsThreeVertical } from "react-icons/pi";
 import { Popconfirm } from "antd";
 import { useDispatch } from "react-redux";
 import { archiveSingleCall, unarchiveSingleCall} from "../../slices/callSlice";
+import { useNavigate } from "react-router-dom";
 
 function Activity({
   call_type,
@@ -17,9 +18,10 @@ function Activity({
   is_archived
 }) {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   return (
-    <div className="w-[50%] bg-white p-5 m-4 flex justify-between items-center rounded-lg shadow">
+    <div className="min-w-[75%] max-w-[50%] bg-white p-5 m-2 lg:m-4 flex justify-between items-center rounded-lg shadow">
       {direction === "inbound" ? (
         <SlCallIn color="blue" />
       ) : (
@@ -31,12 +33,7 @@ function Activity({
       <div className="flex gap-2 items-center">
         <div className="flex flex-col gap-1">
           <p className="text-xs">
-            {/* {new Date(created_at).toISOString().split("T")[0]} */}
-            {created_at}
-          </p>
-          <p className="text-xs">
-            {/* {new Date(created_at).toISOString().split("T")[1].split(".")[0]} */}
-            {created_at}
+            {new Date(created_at).toString().split("T")[0]}
           </p>
         </div>
         <Popconfirm
@@ -50,7 +47,7 @@ function Activity({
                 dispatch(unarchiveSingleCall(id))
             }
           }}
-          onConfirm={()=>dispatch(unarchiveAllCallS())}
+          onConfirm={()=>navigate(`/${id}`)}
         >
           <PiDotsThreeVertical size={20} className="hover:cursor-pointer" />
         </Popconfirm>

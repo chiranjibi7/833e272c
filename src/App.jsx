@@ -1,18 +1,20 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import AppLayout from "./Layout/AppLayout";
-import {ActivityDetail, ActivityFeed, ArchiveList} from "./pages";
+import {ActivityFeed, ArchiveList,ActivityDetail} from "./pages";
 
 const App = () => {
   return (
+    <>
     <Router>
       <Routes>
         <Route element={<AppLayout />}>
-          {/* Home page route */}
           <Route index element={<ActivityFeed/>} />
           <Route path="/archives" element={<ArchiveList/>} />
+          <Route path="/:id" element={<ActivityDetail/>} />
         </Route>
       </Routes>
     </Router>
+    </>
   );
 };
 
